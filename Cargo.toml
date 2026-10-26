@@ -1,0 +1,19 @@
+[package]
+name = "sigmaos-installer"
+version = "0.1.0"
+edition = "2021"
+authors = ["SigmaOS Project"]
+description = "System installer and setup wizard"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/AaryanSinghChauhan09/SigmaOS-installer"
+readme = "README.md"
+keywords = ["installer", "setup", "installation"]
+categories = ["os"]
+
+[dependencies]
+sigmaos-kernel = { version = "0.1", path = "../SigmaOS-kernel" }
+sigmaos-filesystem = { version = "0.1", path = "../SigmaOS-filesystem" }
+sigmaos-bootloader = { version = "0.1", path = "../SigmaOS-bootloader" }
+
+[profile.release]
+opt-level = 3
