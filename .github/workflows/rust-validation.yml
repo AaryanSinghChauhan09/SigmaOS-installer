@@ -1,0 +1,64 @@
+name: Rust validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out component
+        uses: actions/checkout@v4
+        with:
+          path: ${{ github.event.repository.name }}
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Check out transitive sibling path dependencies
+        working-directory: ${{ github.workspace }}/${{ github.event.repository.name }}
+        run: |
+          python3 - <<'PY'
+          import subprocess
+          import tomllib
+          from pathlib import Path
+
+          component = Path.cwd().resolve()
+          pending = [component]
+          inspected = set()
+          while pending:
+              crate = pending.pop()
+              if crate in inspected:
+                  continue
+              inspected.add(crate)
+              manifest_path = crate / "Cargo.toml"
+              if not manifest_path.is_file():
+                  raise SystemExit(f"missing path dependency manifest: {manifest_path}")
+              manifest = tomllib.loads(manifest_path.read_text())
+              for section in ("dependencies", "dev-dependencies", "build-dependencies"):
+                  for value in manifest.get(section, {}).values():
+                      if not isinstance(value, dict) or "path" not in value:
+                          continue
+                      dependency = (crate / value["path"]).resolve()
+                      if dependency.is_relative_to(component):
+                          pending.append(dependency)
+                          continue
+                      repository = dependency.name
+                      if not repository.startswith("SigmaOS-"):
+                          raise SystemExit(f"refusing non-SigmaOS path dependency: {dependency}")
+                      if not (dependency / ".git").is_dir():
+                          subprocess.run(
+                              ["git", "clone", "--depth", "1",
+                               f"https://github.com/AaryanSinghChauhan09/{repository}.git",
+                               str(dependency)],
+                              check=True,
+                          )
+                      pending.append(dependency)
+          PY
+      - name: Run crate tests
+        working-directory: ${{ github.workspace }}/${{ github.event.repository.name }}
+        run: cargo test --all-targets
