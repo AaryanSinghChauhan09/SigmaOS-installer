@@ -4,4 +4,8 @@
 pub mod installer;
 pub mod mintinstall;
 
-pub use installer::Installer;
+pub use installer::*;
+pub use mintinstall::*;
+
+#[derive(Debug, Default, Clone)]
+pub struct Installer;
