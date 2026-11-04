@@ -1,19 +1,17 @@
 [package]
-name = "sigmaos-installer"
+name = "sigmaos-component"
 version = "0.1.0"
 edition = "2021"
-authors = ["SigmaOS Project"]
-description = "System installer and setup wizard"
-license = "GPL-3.0-or-later"
-repository = "https://github.com/AaryanSinghChauhan09/SigmaOS-installer"
-readme = "README.md"
-keywords = ["installer", "setup", "installation"]
-categories = ["os"]
+authors = ["SigmaOS Team"]
+license = "MIT OR Apache-2.0"
+description = "SigmaOS component following engineering principles"
 
 [dependencies]
-sigmaos-kernel = { version = "0.1", path = "../SigmaOS-kernel" }
-sigmaos-filesystem = { version = "0.1", path = "../SigmaOS-filesystem" }
-sigmaos-bootloader = { version = "0.1", path = "../SigmaOS-bootloader" }
+anyhow = "1.0"
+thiserror = "1.0"
+log = "0.4"
+env_logger = "0.10"
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
 
-[profile.release]
-opt-level = 3
+[dev-dependencies]
