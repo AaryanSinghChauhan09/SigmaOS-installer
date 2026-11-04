@@ -221,8 +221,8 @@ pub struct FirstBootUpdate {
 /// Stateful driver for the first-boot OOBE wizard.
 ///
 /// # Example
-/// ```
-/// # use sigmaos_installer::installer::first_boot_wizard::*;
+/// ```rust,no_run
+/// # use sigmaos_component::*;
 /// let mut wizard = FirstBootWizard::new();
 /// assert_eq!(wizard.current_step(), FirstBootStep::Welcome);
 /// ```
@@ -240,10 +240,7 @@ impl FirstBootWizard {
     pub fn new() -> Self {
         Self {
             step: FirstBootStep::Welcome,
-            config: FirstBootConfig {
-                use_dhcp_default: (),
-                ..Default::default()
-            },
+            config: FirstBootConfig::default(),
             root: PathBuf::from("/"),
         }
     }
