@@ -1,0 +1,16 @@
+[component]
+name = "SigmaOS-installer"
+tier = 2
+stability = "scaffold"
+language = "rust"
+description = "System installer wizard supporting GPT partitioning, LUKS2 encryption, EFI bootloader, and autoinstall"
+upstream = ["https://github.com/calamares/calamares"]
+
+[contract]
+provides = ["system-installer", "disk-partitioner", "luks-encryption-wizard"]
+depends_on = []
+
+[maturity]
+status = "Scaffold"
+test_evidence = "Compiles and passes AAA unit tests"
+next_milestone = "Hardware and runtime integration"

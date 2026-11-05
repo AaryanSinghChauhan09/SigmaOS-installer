@@ -1,19 +1,36 @@
-//! SigmaOS Installer & First-Boot Setup Wizard
-//! System installer, disk partitioner, and out-of-box setup wizard
+#[derive(Debug, Clone)]
+pub struct InstallationTarget {
+    pub target_disk: String,
+    pub encrypt_luks2: bool,
+    pub efi_partition_mb: u64,
+}
 
-#![allow(dead_code)]
+#[derive(Debug, Default)]
+pub struct InstallerEngine {
+    target: Option<InstallationTarget>,
+}
 
-pub mod config;
-pub mod error;
-pub mod installer;
-pub mod mintinstall;
-pub mod service;
+impl InstallerEngine {
+    pub fn new() -> Self { Self::default() }
+    pub fn configure(&mut self, disk: &str, encrypt: bool, efi_mb: u64) {
+        self.target = Some(InstallationTarget {
+            target_disk: disk.to_string(),
+            encrypt_luks2: encrypt,
+            efi_partition_mb: efi_mb,
+        });
+    }
+    pub fn is_ready(&self) -> bool {
+        self.target.as_ref().map(|t| !t.target_disk.is_empty() && t.efi_partition_mb >= 512).unwrap_or(false)
+    }
+}
 
-pub use config::Config;
-pub use error::{ComponentError, Result};
-pub use installer::*;
-pub use mintinstall::*;
-pub use service::Service;
-
-#[derive(Debug, Default, Clone)]
-pub struct Installer;
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_installer_readiness() {
+        let mut inst = InstallerEngine::new();
+        inst.configure("/dev/nvme0n1", true, 512);
+        assert!(inst.is_ready());
+    }
+}
