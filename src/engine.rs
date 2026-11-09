@@ -514,7 +514,9 @@ impl<P: DeviceProbe, E: Executor> InstallerEngine<P, E> {
                     program: "bash".into(),
                     args: vec![
                         "-c".into(),
-                        "chroot /mnt pacman -S --noconfirm --needed sigmaos-desktop sigmaos-hyprland sigmaos-shell".into(),
+                        format!(
+                            "chroot /mnt pacman -S --noconfirm --needed hyprland waybar mako swww swaybg xdg-desktop-portal-hyprland sigmaos-desktop sigmaos-shell sigmaos-notifications sigmaos-launcher sigmaos-settings sigmaos-theme-engine"
+                        ).into(),
                     ],
                     stdin: None,
                 }],
