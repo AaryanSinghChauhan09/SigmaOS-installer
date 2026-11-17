@@ -3,12 +3,12 @@ name = "SigmaOS-installer"
 tier = 2
 stability = "scaffold"
 language = "rust"
-description = "System installer wizard supporting GPT partitioning, LUKS2 encryption, EFI bootloader, and autoinstall"
+description = "Graphical live installer (partition, copy, bootloader)"
 upstream = ["https://github.com/calamares/calamares"]
 
 [contract]
 provides = ["system-installer", "disk-partitioner", "luks-encryption-wizard"]
-depends_on = []
+depends_on = ["SigmaOS-filesystem", "SigmaOS-packages", "SigmaOS-system"]
 
 [maturity]
 status = "Scaffold"
