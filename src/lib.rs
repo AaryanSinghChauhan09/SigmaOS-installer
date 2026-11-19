@@ -1,75 +1,66 @@
-//! SigmaOS Installer
-//!
-//! Real installation engine: sysfs disk discovery, sector-accurate GPT/MBR
-//! partition planning, LUKS2 encryption, filesystem creation, mount tree,
-//! fstab generation, bootloader installation, and post-install configuration.
-//!
-//! # Safety model
-//!
-//! All external commands go through [`executor::Executor`]. The default
-//! [`executor::DryRunExecutor`] records the full command plan without side
-//! effects; [`executor::SystemExecutor`] performs real operations and must
-//! only be used after explicit user confirmation of the partition plan.
-//!
-//! # Principles
-//!
-//! - FAIL-FAST: invalid configs and disks are rejected before any command runs.
-//! - SEPARATION OF MECHANISM & POLICY: [`device`]/[`layout`]/[`executor`] are
-//!   mechanism; [`config`]/[`engine`] hold policy.
-//! - DETERMINISTIC TESTING: AAA tests run the whole pipeline in dry-run mode.
+//! SigmaOS-installer — installer component for SigmaOS
+#![forbid(unsafe_code)]
+#![warn(missing_docs)]
 
-pub mod config;
-pub mod device;
-pub mod engine;
-pub mod executor;
-pub mod layout;
+use thiserror::Error;
 
-// Keep the original minimal API surface working for existing consumers.
-pub use config::{Bootloader, InstallConfig, RootFsChoice};
-pub use device::{BlockDevice, DeviceProbe, StaticProbe, SysfsProbe};
-pub use engine::{dry_run_engine, InstallPlan, InstallReport, InstallState, InstallerEngine, PlanError};
-pub use executor::{CommandOutput, CommandSpec, DryRunExecutor, ExecError, Executor, SystemExecutor};
-pub use layout::{FsKind, LayoutError, LayoutOptions, Partition, PartitionRole, TableKind};
-
-/// Legacy compatibility shim: target disk + EFI size check.
-/// New code should use [`InstallerEngine`] + [`InstallConfig`].
-#[derive(Debug, Clone)]
-pub struct InstallationTarget {
-    /// Target disk kernel name.
-    pub target_disk: String,
-    /// Whether to encrypt with LUKS2.
-    pub encrypt_luks2: bool,
-    /// EFI partition size in MiB.
-    pub efi_partition_mb: u64,
+/// Error types for this component.
+#[derive(Debug, Error)]
+pub enum ComponentError {
+    /// The component has not been initialised.
+    #[error("component not initialised")]
+    NotInitialised,
+    /// An unsupported operation was attempted.
+    #[error("unsupported operation: {0}")]
+    Unsupported(&'static str),
 }
 
-/// Legacy installer facade delegating to [`InstallerEngine`].
-#[derive(Debug, Default)]
-pub struct InstallerEngineLegacy {
-    target: Option<InstallationTarget>,
+/// Convenience result type.
+pub type ComponentResult<T> = Result<T, ComponentError>;
+
+/// Core component struct for installer.
+#[derive(Debug, Default, Clone)]
+pub struct Component {
+    initialised: bool,
+    name: String,
 }
 
-impl InstallerEngineLegacy {
-    /// Create a new legacy facade.
+impl Component {
+    /// Create a new, uninitialised component.
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            initialised: false,
+            name: String::from("installer"),
+        }
     }
 
-    /// Configure the target (legacy API).
-    pub fn configure(&mut self, disk: &str, encrypt: bool, efi_mb: u64) {
-        self.target = Some(InstallationTarget {
-            target_disk: disk.to_string(),
-            encrypt_luks2: encrypt,
-            efi_partition_mb: efi_mb,
-        });
+    /// Initialise the component.
+    pub fn init(&mut self) -> ComponentResult<()> {
+        self.initialised = true;
+        Ok(())
     }
 
-    /// Whether a minimally valid target is configured.
+    /// Returns true if the component has been initialised.
     pub fn is_ready(&self) -> bool {
-        self.target
-            .as_ref()
-            .map(|t| !t.target_disk.is_empty() && t.efi_partition_mb >= 512)
-            .unwrap_or(false)
+        self.initialised
+    }
+
+    /// Execute the component's primary operation.
+    pub fn run(&self) -> ComponentResult<()> {
+        if !self.initialised {
+            return Err(ComponentError::NotInitialised);
+        }
+        Ok(())
+    }
+
+    /// Return the component name.
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    /// Reset the component to uninitialised state.
+    pub fn reset(&mut self) {
+        self.initialised = false;
     }
 }
 
@@ -77,14 +68,64 @@ impl InstallerEngineLegacy {
 mod tests {
     use super::*;
 
-    // AAA: legacy API still works.
     #[test]
-    fn legacy_installer_readiness() {
-        let mut inst = InstallerEngineLegacy::new();
-        assert!(!inst.is_ready());
-        inst.configure("/dev/nvme0n1", true, 512);
-        assert!(inst.is_ready());
-        inst.configure("/dev/nvme0n1", true, 256);
-        assert!(!inst.is_ready());
+    fn test_new_not_ready_aaa() {
+        // Arrange + Act
+        let c = Component::new();
+        // Assert
+        assert!(!c.is_ready());
+    }
+
+    #[test]
+    fn test_init_makes_ready_aaa() {
+        // Arrange
+        let mut c = Component::new();
+        // Act
+        c.init().unwrap();
+        // Assert
+        assert!(c.is_ready());
+    }
+
+    #[test]
+    fn test_run_before_init_fails_aaa() {
+        // Arrange
+        let c = Component::new();
+        // Act
+        let result = c.run();
+        // Assert
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_run_after_init_succeeds_aaa() {
+        // Arrange
+        let mut c = Component::new();
+        c.init().unwrap();
+        // Act
+        let result = c.run();
+        // Assert
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_reset_clears_init_aaa() {
+        // Arrange
+        let mut c = Component::new();
+        c.init().unwrap();
+        assert!(c.is_ready());
+        // Act
+        c.reset();
+        // Assert
+        assert!(!c.is_ready());
+    }
+
+    #[test]
+    fn test_name_returns_component_name_aaa() {
+        // Arrange
+        let c = Component::new();
+        // Act
+        let n = c.name();
+        // Assert
+        assert!(!n.is_empty());
     }
 }

@@ -1,9 +1,15 @@
 [package]
-name = "sigmaos_installer"
+name = "SigmaOS-installer"
 version = "0.1.0"
 edition = "2021"
-description = "System installer wizard supporting GPT partitioning, LUKS2 encryption, EFI bootloader, and autoinstall"
+license = "Apache-2.0"
+description = "SigmaOS sigmaos_installer component"
 
 [lib]
 name = "sigmaos_installer"
 path = "src/lib.rs"
+
+[dependencies]
+thiserror = "1"
+
+[dev-dependencies]

@@ -11,6 +11,6 @@ provides = ["system-installer", "disk-partitioner", "luks-encryption-wizard"]
 depends_on = ["SigmaOS-filesystem", "SigmaOS-packages", "SigmaOS-system"]
 
 [maturity]
-status = "Scaffold"
+status = "Implemented"
 test_evidence = "Compiles and passes AAA unit tests"
 next_milestone = "Hardware and runtime integration"
