@@ -1,7 +1,7 @@
 [component]
 name = "SigmaOS-installer"
 tier = 2
-stability = "scaffold"
+stability = "beta"
 language = "rust"
 description = "Graphical live installer (partition, copy, bootloader)"
 upstream = ["https://github.com/calamares/calamares"]
