@@ -3,3 +3,7 @@ Cargo.lock
 *.swp
 *.bak
 /target/
+# SigmaOS .gitignore policy
+# *.md files (except README.md) are kept in GitHub Wikis, not main branch
+# This keeps repositories clean and follows the Omarchy Linux model
+
