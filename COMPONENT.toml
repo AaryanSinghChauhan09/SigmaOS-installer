@@ -8,7 +8,7 @@ upstream = ["https://github.com/calamares/calamares"]
 
 [contract]
 provides = ["system-installer", "disk-partitioner", "luks-encryption-wizard"]
-depends_on = ["SigmaOS-filesystem", "SigmaOS-packages", "SigmaOS-system"]
+depends_on = ["SigmaOS-ISO", "SigmaOS-system"]
 
 [maturity]
 status = "Implemented"
