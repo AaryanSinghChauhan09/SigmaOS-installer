@@ -2,6 +2,9 @@
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
 
+/// Graphical system installer module.
+pub mod sigmainstaller;
+
 use thiserror::Error;
 
 /// Error types for this component.
