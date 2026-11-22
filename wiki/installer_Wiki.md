@@ -1,18 +1,18 @@
-# SigmaOS-SigmaOS-installer Component Wiki
+# SigmaOS-installer Component Wiki
 
 ## Overview
-SigmaOS-SigmaOS-installer provides Graphical live installer (partition, copy, bootloader) for the SigmaOS operating system. It demonstrates the subsystem and integration within the SigmaOS ecosystem, following the principles of clear abstraction and deterministic initialization.
+SigmaOS-installer provides component for the SigmaOS operating system. It demonstrates the subsystem and integration within the SigmaOS ecosystem, following the principles of clear abstraction and deterministic initialization.
 
 ## Principles
-- Single Responsibility
-- SigmaOS-installer Abstraction
-- Fail-Fast on SigmaOS-installer Initialization Errors
-- Deterministic SigmaOS-installer Setup
-- Clear Abstraction Over SigmaOS-installer APIs
-- Composition over Inheritance for SigmaOS-installer extensions
+- **Single Responsibility**: Each component has a single well-defined purpose
+- **SigmaOS-installer Abstraction**: Clear abstraction over the component's APIs and functionality
+- **Fail-Fast on SigmaOS-installer Initialization Errors**: Fail-fast principle for initialization errors
+- **Deterministic SigmaOS-installer Setup**: Deterministic initialization and configuration
+- **Clear Abstraction Over SigmaOS-installer APIs**: Well-defined, clear APIs
+- **Composition over Inheritance for SigmaOS-installer extensions**: Use composition patterns for extensions
 
 ## Architecture
-SigmaOS-SigmaOS-installer follows a SigmaOS-installer pattern:
+SigmaOS-installer follows a SigmaOS-installer pattern:
 - **SigmaOS-installer Core**: Provides SigmaOS-installer support, SigmaOS-installer management, and SigmaOS-installer tracking
 - **Management**: Supports SigmaOS-installer management, SigmaOS-installer configuration, and SigmaOS-installer lifecycle
 - **Tracking**: Supports SigmaOS-installer status, SigmaOS-installer tracking, and SigmaOS-installer lifecycle
@@ -20,10 +20,10 @@ SigmaOS-SigmaOS-installer follows a SigmaOS-installer pattern:
 
 ## API
 The component provides the following public APIs:
--  - Manage a SigmaOS-installer by given configuration
--  - Register a SigmaOS-installer by given name
--  - Get SigmaOS-installer status and SigmaOS-installer availability
--  - Track SigmaOS-installer management and SigmaOS-installer tracking
+- Manage a SigmaOS-installer by given configuration
+- Register a SigmaOS-installer by given name
+- Get SigmaOS-installer status and SigmaOS-installer availability
+- Track SigmaOS-installer management and SigmaOS-installer tracking
 - Error types for SigmaOS-installer failure scenarios or unsupported SigmaOS-installer types
 
 ## Test Structure (Arrange-Act-ASSERT)
@@ -32,11 +32,8 @@ All tests follow the AAA pattern:
 2. **Act**: Execute the code under test (SigmaOS-installer init, SigmaOS-installer management)
 3. **Assert**: Verify the expected SigmaOS-installer results
 
-Example:
-
-
 ## Development
-- Follows Rust best practices with 
+- Follows best practices with clear abstraction boundaries
 - SigmaOS-installer initialization is best-effort; gracefully degrades on unsupported configurations
 - Comprehensive error types for all SigmaOS-installer failure scenarios
 - Unit tests provided for SigmaOS-installer management and configuration
