@@ -3,7 +3,6 @@
 //! Inspired by Linux Mint's Ubiquity and Calamares, this module provides a comprehensive
 //! graphical system installer with partition management, locale selection, and user configuration.
 
-
 extern crate alloc;
 use alloc::collections::BTreeMap;
 use alloc::string::String;
@@ -12,53 +11,86 @@ use core::sync::atomic::{AtomicBool, Ordering};
 /// Installation state enumeration
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InstallState {
+    /// Initial welcome screen.
     Welcome,
+    /// Language selection step.
     Language,
+    /// Location and timezone selection step.
     Location,
+    /// Disk partitioning step.
     Partitioning,
+    /// User account setup step.
     UserSetup,
+    /// File copy and package installation step.
     Installation,
+    /// Installation finished successfully.
     Complete,
+    /// Installation failed.
     Failed,
+    /// Installation cancelled by the user.
     Cancelled,
+    /// Unknown or unrecognized state.
     Unknown,
 }
 
 /// Partitioning mode enumeration
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PartitioningMode {
+    /// Let the installer choose the layout.
     Automatic,
+    /// User-defined partition layout.
     Manual,
+    /// Install alongside an existing operating system.
     Alongside,
+    /// Erase the entire target disk.
     EraseDisk,
+    /// Unknown partitioning mode.
     Unknown,
 }
 
 /// Filesystem type enumeration
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FilesystemType {
+    /// ext4 filesystem.
     Ext4,
+    /// Btrfs filesystem.
     Btrfs,
+    /// XFS filesystem.
     Xfs,
+    /// Swap space.
     Swap,
+    /// LVM logical volume.
     LVM,
+    /// Unknown filesystem type.
     Unknown,
 }
 
 /// Installation configuration
 #[derive(Debug, Clone)]
 pub struct InstallConfig {
+    /// Unique identifier for this installation.
     pub install_id: String,
+    /// Selected language or locale.
     pub language: String,
+    /// Selected timezone.
     pub timezone: String,
+    /// Selected keyboard layout.
     pub keyboard_layout: String,
+    /// Target hostname.
     pub hostname: String,
+    /// First user account name.
     pub username: String,
+    /// Partitioning strategy.
     pub partitioning_mode: PartitioningMode,
+    /// Target disk device path.
     pub target_disk: String,
+    /// Filesystem for the root partition.
     pub filesystem: FilesystemType,
+    /// Current installation state.
     pub state: InstallState,
+    /// Completion percentage from 0 to 100.
     pub progress_percent: u8,
+    /// Last error message, if any.
     pub error_message: String,
 }
 
