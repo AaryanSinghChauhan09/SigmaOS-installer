@@ -1,6 +1,6 @@
 # SigmaOS-installer
 
-Graphical live installer (partition, copy, bootloader)
+Installer component for SigmaOS — installation state machine for the partition/copy/bootloader flow. Disk operations are future work.
 
 - **Category:** Utilities
 - **Engine:** installer
