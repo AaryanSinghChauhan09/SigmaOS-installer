@@ -5,6 +5,9 @@
 /// Graphical system installer module.
 pub mod sigmainstaller;
 
+/// Solver-plan consumption for the package installation step.
+pub mod package_plan;
+
 use thiserror::Error;
 
 /// Error types for this component.
