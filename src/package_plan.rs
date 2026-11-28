@@ -77,6 +77,16 @@ impl SolverPlan {
         self.install.len() + self.upgrade.len()
     }
 
+    /// Human-readable summary for progress UIs.
+    pub fn summary(&self) -> String {
+        format!(
+            "{} install(s), {} upgrade(s), {} kept",
+            self.install.len(),
+            self.upgrade.len(),
+            self.keep.len()
+        )
+    }
+
     /// Ordered steps that mutate the system (installs + upgrades),
     /// excluding kept packages — what the installer must execute.
     pub fn mutations(&self) -> Result<Vec<PackageStep>, PlanError> {
