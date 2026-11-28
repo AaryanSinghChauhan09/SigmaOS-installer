@@ -76,6 +76,19 @@ impl SolverPlan {
     pub fn changed(&self) -> usize {
         self.install.len() + self.upgrade.len()
     }
+
+    /// Ordered steps that mutate the system (installs + upgrades),
+    /// excluding kept packages — what the installer must execute.
+    pub fn mutations(&self) -> Result<Vec<PackageStep>, PlanError> {
+        let mut steps = Vec::new();
+        for e in &self.install {
+            steps.push(parse_name_version(e, false)?);
+        }
+        for e in &self.upgrade {
+            steps.push(parse_upgrade(e)?);
+        }
+        Ok(steps)
+    }
 }
 
 fn parse_name_version(entry: &str, _upgrade: bool) -> Result<PackageStep, PlanError> {
@@ -145,6 +158,15 @@ mod tests {
         let bad_up = r#"{"install":[],"upgrade":["badformat"],"keep":[]}"#;
         let plan2 = SolverPlan::from_json(bad_up).unwrap();
         assert!(plan2.install_sequence().is_err());
+    }
+
+    #[test]
+    fn mutations_exclude_keeps() {
+        let json = r#"{"install":["a=1.0"],"upgrade":["c:1.0->2.0"],"keep":["d=3.0"]}"#;
+        let plan = SolverPlan::from_json(json).unwrap();
+        let muts = plan.mutations().unwrap();
+        assert_eq!(muts.len(), 2);
+        assert!(muts.iter().all(|s| s.name != "d"));
     }
 
     #[test]
